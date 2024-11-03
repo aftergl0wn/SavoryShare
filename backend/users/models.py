@@ -6,7 +6,7 @@ from .manager import CustomUserManager
 VALID_NAME_VALUES = 150
 
 
-class MyUser(AbstractUser):
+class CustomUser(AbstractUser):
     email = models.EmailField(
         unique=True,
         verbose_name='Адрес электронной почты'

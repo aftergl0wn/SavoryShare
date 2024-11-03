@@ -17,6 +17,7 @@ class Ingredient(TagIngredient):
     )
 
     class Meta:
+        default_related_name = 'ingredients'
         verbose_name = 'ингредиент'
         verbose_name_plural = 'Ингредиенты'
 
@@ -24,13 +25,12 @@ class Ingredient(TagIngredient):
 class Tag(TagIngredient):
     slug = models.SlugField(
         max_length=VALID_SLUG_VALUES,
-        null=True,
         unique=True,
         verbose_name='Слаг'
     )
 
     class Meta:
-        default_related_name = 'tag'
+        default_related_name = 'tags'
         verbose_name = 'тег'
         verbose_name_plural = 'Теги'
 
@@ -39,13 +39,13 @@ class Subscribe(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='subscriber',
+        related_name='subscribers',
         verbose_name='Подписчик'
     )
     owner = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='owner',
+        related_name='owners',
         verbose_name='Пользователь'
     )
 
@@ -111,7 +111,7 @@ class Recipe(models.Model):
     ]
 
     class Meta:
-        default_related_name = 'recipe'
+        default_related_name = 'recipes'
         verbose_name = 'рецепт'
         verbose_name_plural = 'Рецепты'
 
@@ -152,7 +152,7 @@ class IngredientRecipe(models.Model):
     )
 
     class Meta:
-        default_related_name = 'ingredient_recipe'
+        default_related_name = 'ingredients_recipes'
         constraints = [
             models.UniqueConstraint(
                 fields=['ingredient', 'recipe'],
@@ -181,7 +181,7 @@ class TagRecipe(models.Model):
     )
 
     class Meta:
-        default_related_name = 'tag_recipe'
+        default_related_name = 'tags_recipes'
         constraints = [
             models.UniqueConstraint(
                 fields=['tag', 'recipe'],
@@ -198,7 +198,7 @@ class TagRecipe(models.Model):
 class Favorite(FavoriteShoppingCart):
 
     class Meta:
-        default_related_name = 'favorite'
+        default_related_name = 'favorites'
         verbose_name = 'избранное'
         verbose_name_plural = 'Избранные'
 
@@ -206,6 +206,6 @@ class Favorite(FavoriteShoppingCart):
 class ShoppingCart(FavoriteShoppingCart):
 
     class Meta:
-        default_related_name = 'shoppingcart'
+        default_related_name = 'shoppingcarts'
         verbose_name = 'список покупок'
         verbose_name_plural = 'Списки покупок'

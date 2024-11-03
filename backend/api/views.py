@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.db.models import Sum
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
@@ -46,12 +47,10 @@ class AvatarViewSet(
     GenericViewSet
 ):
     serializer_class = AvatarSerializer
-    queryset = User.objects.all()
     lookup_field = 'avatar'
 
     def get_object(self):
-        obj = User.objects.get(pk=self.request.user.id)
-        return obj
+        return self.request.user
 
 
 class TagView(
@@ -94,21 +93,21 @@ class RecipeView(viewsets.ModelViewSet):
 
     @action(methods=['POST', 'DELETE'], detail=True)
     def favorite(self, request, pk):
-        findings = {
+        dict_param = {
             'serializer': FavoriteSerializer,
             'base_model': Recipe,
             'related_model': Favorite
         }
-        return util_action(self, request, pk, findings)
+        return util_action(self, request, pk, dict_param)
 
     @action(methods=['POST', 'DELETE'], detail=True, url_path='shopping_cart')
     def shoppingcart(self, request, pk):
-        findings = {
+        dict_param = {
             'serializer': ShoppingCartSerializer,
             'base_model': Recipe,
             'related_model': ShoppingCart
         }
-        return util_action(self, request, pk, findings)
+        return util_action(self, request, pk, dict_param)
 
     @action(detail=True, url_path='get-link')
     def get_link(self, request, pk):
@@ -126,12 +125,11 @@ class RecipeView(viewsets.ModelViewSet):
     )
     def download(self, request):
         queryset = IngredientRecipe.objects.filter(
-            recipe__shoppingcart__user=self.request.user
+            recipe__shoppingcarts__user=self.request.user
         ).values(
             'ingredient__name',
-            'ingredient__measurement_unit',
-            'amount'
-        )
+            'ingredient__measurement_unit'
+        ).annotate(amount=Sum('amount'))
         list_shop = 'Список покупок:\n'
         for part in queryset:
             list_shop += (
@@ -145,7 +143,7 @@ class RecipeView(viewsets.ModelViewSet):
         return response
 
 
-class MyUserViewSet(UserViewSet):
+class CustomUserViewSet(UserViewSet):
     pagination_class = RecipePagination
 
     @action(
@@ -158,7 +156,7 @@ class MyUserViewSet(UserViewSet):
 
     @action(methods=['GET'], detail=False)
     def subscriptions(self, request):
-        queryset = self.request.user.subscriber.all()
+        queryset = self.request.user.subscribers.all()
         pages = self.paginate_queryset(queryset)
         serializer = SubscribeSerializer(
             pages, context={'request': request},
@@ -171,7 +169,7 @@ class MyUserViewSet(UserViewSet):
         serializer = SubscribeSerializer(
             data={
                 'user': self.request.user.id,
-                'owner': id
+                'owner': get_object_or_404(User, id=id).id
             },
             context={'request': request})
         if request.method == "DELETE":
@@ -185,35 +183,25 @@ class MyUserViewSet(UserViewSet):
                 ).delete()
                 return Response(status=status.HTTP_204_NO_CONTENT)
             return Response(status=status.HTTP_400_BAD_REQUEST)
-        if request.method == "POST":
-            if serializer.is_valid():
-                serializer.save(
-                    user=self.request.user,
-                    owner=get_object_or_404(User, id=id)
-                )
-                return Response(
-                    serializer.data,
-                    status=status.HTTP_201_CREATED
-                )
-            return Response(
-                serializer.errors,
-                status=status.HTTP_400_BAD_REQUEST
-            )
+        serializer.is_valid(raise_exception=True)
+        serializer.save(
+            user=self.request.user,
+            owner=get_object_or_404(User, id=id)
+        )
+        return Response(
+            serializer.data,
+            status=status.HTTP_201_CREATED
+        )
 
     @action(methods=['PUT', 'DELETE'], detail=False, url_path='me/avatar')
     def avatar(self, request):
         serializer = AvatarSerializer(self.get_instance(), data=request.data)
         if request.method == "DELETE":
-            get_object_or_404(User, id=self.request.user.id).avatar.delete()
+            self.request.user.avatar.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
-        if request.method == "PUT":
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(
-                serializer.errors,
-                status=status.HTTP_400_BAD_REQUEST
-            )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class ShortLinkView(APIView):

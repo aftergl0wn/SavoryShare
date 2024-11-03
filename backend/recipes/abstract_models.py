@@ -9,6 +9,7 @@ VALID_NAME_VALUES = 128
 
 class TagIngredient(models.Model):
     name = models.CharField(
+        unique=True,
         max_length=VALID_NAME_VALUES,
         verbose_name='Название'
     )
