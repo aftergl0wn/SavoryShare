@@ -206,6 +206,6 @@ class Favorite(FavoriteShoppingCart):
 class ShoppingCart(FavoriteShoppingCart):
 
     class Meta:
-        default_related_name = 'shoppingcarts'
+        default_related_name = 'shopping_carts'
         verbose_name = 'список покупок'
         verbose_name_plural = 'Списки покупок'

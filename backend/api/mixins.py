@@ -34,7 +34,7 @@ class UserBaseSerializer(UserSerializer):
                   'recipes_count')
 
     def get_is_subscribed(self, obj):
-        if self.context.get('request').user.is_authenticated is False:
+        if not self.context.get('request').user.is_authenticated:
             return False
         return Subscribe.objects.filter(
             user=self.context.get('request').user,
@@ -43,10 +43,14 @@ class UserBaseSerializer(UserSerializer):
 
 
 class FavoriteCartSerializerSPE(serializers.ModelSerializer):
-    id = serializers.ReadOnlyField()
-    name = serializers.CharField()
-    image = Base64ImageField(required=False, allow_null=True)
-    cooking_time = serializers.IntegerField()
+    id = serializers.IntegerField()
+    name = serializers.CharField(source='user')
+    image = Base64ImageField(
+        required=False,
+        allow_null=True,
+        source='recipe.image'
+    )
+    cooking_time = serializers.IntegerField(source='recipe.cooking_time')
 
     class Meta:
         model = Recipe
@@ -59,8 +63,13 @@ class FavoriteCartSerializerSPE(serializers.ModelSerializer):
 
 
 class ShoppingCartFavorite(serializers.ModelSerializer):
-    recipe = FavoriteCartSerializerSPE(read_only=True)
 
     class Meta:
-        fields = ('recipe',)
+        fields = ('recipe', 'user')
         model = ShoppingCart
+
+    def to_representation(self, value):
+        return FavoriteCartSerializerSPE(
+            instance=value,
+            context=self.context
+        ).data

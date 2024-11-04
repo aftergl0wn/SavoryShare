@@ -26,7 +26,7 @@ from .serializers import (
     SubscribeSerializer,
     TagSerializer
 )
-from .utils import util_action
+from .utils import util_favorite_shoppingcart
 from recipes.models import (
     Favorite,
     Ingredient,
@@ -93,21 +93,21 @@ class RecipeView(viewsets.ModelViewSet):
 
     @action(methods=['POST', 'DELETE'], detail=True)
     def favorite(self, request, pk):
-        dict_param = {
+        param = {
             'serializer': FavoriteSerializer,
             'base_model': Recipe,
             'related_model': Favorite
         }
-        return util_action(self, request, pk, dict_param)
+        return util_favorite_shoppingcart(self, request, pk, param)
 
     @action(methods=['POST', 'DELETE'], detail=True, url_path='shopping_cart')
     def shoppingcart(self, request, pk):
-        dict_param = {
+        param = {
             'serializer': ShoppingCartSerializer,
             'base_model': Recipe,
             'related_model': ShoppingCart
         }
-        return util_action(self, request, pk, dict_param)
+        return util_favorite_shoppingcart(self, request, pk, param)
 
     @action(detail=True, url_path='get-link')
     def get_link(self, request, pk):
@@ -125,15 +125,15 @@ class RecipeView(viewsets.ModelViewSet):
     )
     def download(self, request):
         queryset = IngredientRecipe.objects.filter(
-            recipe__shoppingcarts__user=self.request.user
+            recipe__shopping_carts__user=self.request.user
         ).values(
             'ingredient__name',
             'ingredient__measurement_unit'
-        ).annotate(amount=Sum('amount'))
+        ).annotate(result_amount=Sum('amount'))
         list_shop = 'Список покупок:\n'
         for part in queryset:
             list_shop += (
-                f'''{part['ingredient__name']}: {part['amount']}
+                f'''{part['ingredient__name']}: {part['result_amount']}
                 {part['ingredient__measurement_unit']}\n'''
             )
         response = HttpResponse(list_shop, content_type='text/csv')

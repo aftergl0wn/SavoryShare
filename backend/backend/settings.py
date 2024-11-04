@@ -7,7 +7,7 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv('SECRET_KEY')
-DEBUG = os.getenv('DEBUG')
+DEBUG = bool(os.getenv('DEBUG'))
 
 ALLOWED_HOSTS = list(os.getenv('ALLOWED_HOSTS'))
 
@@ -120,8 +120,8 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 DJOSER = {
     'SERIALIZERS': {
-        'current_user': 'api.serializers.MyUserSerializer',
-        'user': 'api.serializers.MyUserSerializer',
+        'current_user': 'api.serializers.BaseUserSerializer',
+        'user': 'api.serializers.BaseUserSerializer',
     },
     'HIDE_USERS': False,
     'PERMISSIONS': {

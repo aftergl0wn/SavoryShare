@@ -65,7 +65,7 @@ class WriteIngredientRecipeSerializer(serializers.ModelSerializer):
         fields = ('id', 'amount')
 
 
-class MyUserSerializer(UserBaseSerializer):
+class BaseUserSerializer(UserBaseSerializer):
 
     class Meta(UserBaseSerializer.Meta):
         fields = ('email',
@@ -138,7 +138,7 @@ class SubscribeSerializer(serializers.ModelSerializer):
 
 class ReadRecipeSerializer(serializers.ModelSerializer):
     image = Base64ImageField(required=False, allow_null=True)
-    author = MyUserSerializer(read_only=True)
+    author = BaseUserSerializer(read_only=True)
     tags = TagSerializerSPE(many=True, source='tags_recipes')
     ingredients = IngredientRecipeSerializer(
         many=True,
@@ -172,7 +172,7 @@ class ReadRecipeSerializer(serializers.ModelSerializer):
 
 
 class RecordRecipeSerializer(serializers.ModelSerializer):
-    author = MyUserSerializer(read_only=True)
+    author = BaseUserSerializer(read_only=True)
     image = Base64ImageField(required=True)
     tags = serializers.PrimaryKeyRelatedField(
         many=True,
