@@ -93,21 +93,21 @@ class RecipeView(viewsets.ModelViewSet):
 
     @action(methods=['POST', 'DELETE'], detail=True)
     def favorite(self, request, pk):
-        param = {
+        params = {
             'serializer': FavoriteSerializer,
             'base_model': Recipe,
             'related_model': Favorite
         }
-        return util_favorite_shoppingcart(self, request, pk, param)
+        return util_favorite_shoppingcart(self, request, pk, params)
 
     @action(methods=['POST', 'DELETE'], detail=True, url_path='shopping_cart')
     def shoppingcart(self, request, pk):
-        param = {
+        params = {
             'serializer': ShoppingCartSerializer,
             'base_model': Recipe,
             'related_model': ShoppingCart
         }
-        return util_favorite_shoppingcart(self, request, pk, param)
+        return util_favorite_shoppingcart(self, request, pk, params)
 
     @action(detail=True, url_path='get-link')
     def get_link(self, request, pk):

@@ -3,28 +3,28 @@ from rest_framework import serializers, status
 from rest_framework.response import Response
 
 
-def util_favorite_shoppingcart(self, request, pk, param):
-    serializer = param['serializer'](
+def util_favorite_shoppingcart(self, request, pk, params):
+    serializer = params['serializer'](
         data={
             'user': self.request.user.pk,
-            'recipe': get_object_or_404(param['base_model'], id=pk).pk},
+            'recipe': get_object_or_404(params['base_model'], id=pk).pk},
         context={'request': request}
     )
     if request.method == "DELETE":
-        if param['related_model'].objects.filter(
+        if params['related_model'].objects.filter(
             user=self.request.user,
-            recipe=get_object_or_404(param['base_model'], id=pk)
+            recipe=get_object_or_404(params['base_model'], id=pk)
         ).exists():
-            param['related_model'].objects.get(
+            params['related_model'].objects.get(
                 user=self.request.user,
-                recipe=get_object_or_404(param['base_model'], id=pk)
+                recipe=get_object_or_404(params['base_model'], id=pk)
             ).delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(status=status.HTTP_400_BAD_REQUEST)
     serializer.is_valid(raise_exception=True)
     serializer.save(
         user=self.request.user,
-        recipe=get_object_or_404(param['base_model'], id=pk)
+        recipe=get_object_or_404(params['base_model'], id=pk)
     )
     return Response(
         serializer.data,
