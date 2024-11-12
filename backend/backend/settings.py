@@ -11,6 +11,7 @@ DEBUG = bool(os.getenv('DEBUG'))
 
 ALLOWED_HOSTS = (os.getenv('ALLOWED_HOSTS', '1')).split(',')
 
+CSRF_TRUSTED_ORIGINS = (os.getenv('CSRF_TRUSTED_ORIGINS', '1')).split(',')
 
 AUTH_USER_MODEL = 'users.CustomUser'
 
@@ -122,7 +123,6 @@ REST_FRAMEWORK = {
     'SEARCH_PARAM': 'name'
 }
 
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 MEDIA_URL = '/media/'
 
