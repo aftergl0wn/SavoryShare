@@ -122,7 +122,7 @@ REST_FRAMEWORK = {
     'SEARCH_PARAM': 'name'
 }
 
-# MEDIA_ROOT = BASE_DIR / 'media'
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 MEDIA_URL = '/media/'
 
