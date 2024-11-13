@@ -10,7 +10,7 @@ from recipes.models import (
     Tag, TagRecipe
 )
 from .mixins import (
-    Base64ImageField, ShoppingCartFavorite,
+    ShoppingCartFavorite,
     TagBaseSerializer, UserBaseSerializer,
 )
 from .utils import (
