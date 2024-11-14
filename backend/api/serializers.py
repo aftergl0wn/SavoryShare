@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
-from drf_extra_fields.fields import Base64ImageField
+# from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 
 from recipes.models import (
@@ -10,7 +10,7 @@ from recipes.models import (
     Tag, TagRecipe
 )
 from .mixins import (
-    ShoppingCartFavorite,
+    Base64ImageField, ShoppingCartFavorite,
     TagBaseSerializer, UserBaseSerializer,
 )
 from .utils import (
