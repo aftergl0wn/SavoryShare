@@ -11,8 +11,6 @@ DEBUG = bool(os.getenv('DEBUG'))
 
 ALLOWED_HOSTS = (os.getenv('ALLOWED_HOSTS', '1')).split(',')
 
-# CSRF_TRUSTED_ORIGINS = (os.getenv('CSRF_TRUSTED_ORIGINS', '1')).split(',')
-
 AUTH_USER_MODEL = 'users.CustomUser'
 
 
@@ -30,7 +28,6 @@ INSTALLED_APPS = [
     'recipes.apps.RecipesConfig',
     'users.apps.UsersConfig',
     'api.apps.ApiConfig',
-    'import_export',
 ]
 
 MIDDLEWARE = [
@@ -139,5 +136,3 @@ DJOSER = {
         'user_list': ['rest_framework.permissions.AllowAny'],
     },
 }
-
-IMPORT_EXPORT_USE_TRANSACTIONS = True
