@@ -96,12 +96,6 @@ class SubscribeSerializerSPE(UserBaseSerializer):
     recipes = serializers.SerializerMethodField()
 
     def get_recipes_count(self, obj):
-        url = self.context.get('request').build_absolute_uri()
-        if 'recipes_limit' in url:
-            url, number = url.split('recipes_limit=')
-            return Recipe.objects.filter(
-                author=obj.owner
-            )[:int(number)].count()
         return Recipe.objects.filter(author=obj.id).count()
 
     def get_recipes(self, obj):

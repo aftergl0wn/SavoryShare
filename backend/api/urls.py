@@ -7,7 +7,6 @@ from .views import (
     IngredientView,
     CustomUserViewSet,
     RecipeView,
-    ShortLinkView,
     TagView
 )
 
@@ -22,8 +21,7 @@ router.register('users', CustomUserViewSet, basename='follow')
 urlpatterns = [
     path('', include(router.urls)),
     path('', include('djoser.urls')),
-    path('auth/', include('djoser.urls.authtoken')),
-    path('s/<str:encoded_id>/', ShortLinkView.as_view(), name='shortlink')
+    path('auth/', include('djoser.urls.authtoken'))
 ]
 
 if settings.DEBUG:

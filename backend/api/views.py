@@ -133,12 +133,12 @@ class RecipeView(viewsets.ModelViewSet):
         list_shop = 'Список покупок:\n'
         for part in queryset:
             list_shop += (
-                f'''{part['ingredient__name']}: {part['result_amount']}
-                {part['ingredient__measurement_unit']}\n'''
+                f'{part["ingredient__name"]}: {part["result_amount"]}'
+                f'{part["ingredient__measurement_unit"]}\n'
             )
-        response = HttpResponse(list_shop, content_type='text/csv')
+        response = HttpResponse(list_shop, content_type='text/txt')
         response['Content-Disposition'] = (
-            'attachment; filename="exported_data.csv"'
+            'attachment; filename="exported_data.txt"'
         )
         return response
 
@@ -212,6 +212,6 @@ class ShortLinkView(APIView):
         recipe = get_object_or_404(Recipe, id=recipe_id)
         return HttpResponseRedirect(
             request.build_absolute_uri(
-                f'/api/recipes/{recipe.id}'
+                f'/recipes/{recipe.id}'
             )
         )

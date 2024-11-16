@@ -8,7 +8,7 @@ User = get_user_model()
 
 
 class RecipeCustomFilter(FilterSet):
-    author = filters.ModelChoiceFilter(
+    author = filters.ModelMultipleChoiceFilter(
         queryset=User.objects.filter(recipes__isnull=False)
     )
     tags = filters.ModelMultipleChoiceFilter(

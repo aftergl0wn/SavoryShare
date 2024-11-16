@@ -26,11 +26,11 @@ python3 -m venv env
 ```
 
 ```
-source env/bin/activate
+source venv/Scripts/activate
 ```
 
 ```
-python3 -m pip install --upgrade pip
+python -m pip install --upgrade pip
 ```
 
 Установить зависимости из файла requirements.txt:
@@ -39,15 +39,25 @@ python3 -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-Выполнить миграции:
+Запустить проект через Docker:
 
 ```
-python3 manage.py migrate
+docker compose up
+```
+Применить миграции
+
+```
+docker compose exec backend python manage.py migrate
 ```
 
-Запустить проект:
+Собрать статику Django 
 
 ```
-python3 manage.py runserver
+docker compose exec backend python manage.py collectstatic
 ```
 
+Скопировать статику в /backend_static/static/
+
+```
+docker compose exec backend cp -r /app/collected_static/. /backend_static/static/ 
+```
