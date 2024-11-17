@@ -95,6 +95,20 @@ class SubscribeSerializerSPE(UserBaseSerializer):
     recipes_count = serializers.SerializerMethodField()
     recipes = serializers.SerializerMethodField()
 
+    class Meta:
+        model = User
+        fields = (
+            'username',
+            'id',
+            'email',
+            'first_name',
+            'last_name',
+            'is_subscribed',
+            'recipes',
+            'recipes_count',
+            'avatar'
+        )
+
     def get_recipes_count(self, obj):
         return Recipe.objects.filter(author=obj.id).count()
 
